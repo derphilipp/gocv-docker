@@ -1,7 +1,7 @@
 # gocv-docker
 Gocv - https://gocv.io
 
-Go 1.12 (alpine 3.10)
+Go 1.13 (alpine 3.10)
 
 opencv 4.1.2 - https://github.com/opencv/opencv/
 
