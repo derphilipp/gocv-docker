@@ -1,6 +1,10 @@
 FROM golang:1.13-alpine3.10
 
+ENV GOCV_VERSION=v0.21.0
 ENV OPENCV_VERSION=4.1.2
+ENV IMAGEMAGICK_VERSION=6.9.8-3
+ENV UFRAW_VERSION="0.22"
+
 ENV BUILD="ca-certificates \
          musl \
          alpine-sdk \
@@ -14,7 +18,6 @@ ENV BUILD="ca-certificates \
          pkgconf \
          openblas"
 ENV IMG_MAGICK_BUILD="pkgconfig libx11 lcms2 libbz2 glib libintl"
-
 ENV DEV="binutils \
          clang clang-dev g++ cmake git wget \
          openblas-dev musl-dev libjpeg-turbo-dev \
@@ -25,8 +28,7 @@ ENV LD_LIBRARY_PATH /usr/local/lib64
 ENV CGO_CPPFLAGS -I/usr/local/include
 ENV CGO_CXXFLAGS "--std=c++1z"
 ENV CGO_LDFLAGS "-L/usr/local/lib -lopencv_core -lopencv_face -lopencv_imgproc -lopencv_imgcodecs"
-ENV IMAGEMAGICK_VERSION=6.9.8-3
-ENV UFRAW_VERSION="0.22"
+
 COPY ufraw.patch /
 RUN apk update && \
     apk add --no-cache ${BUILD} ${IMG_MAGICK_BUILD} && \
@@ -64,7 +66,7 @@ RUN apk update && \
     make -j4 && \
     make install && \
     cd && rm -rf /tmp/opencv && \
-    go get -u -d gocv.io/x/gocv && go run ${GOPATH}/src/gocv.io/x/gocv/cmd/version/main.go && \
+    GO111MODULE=on go get -u -d gocv.io/x/gocv@${OPENCV_VERSION} && go run ${GOPATH}/src/gocv.io/x/gocv/cmd/version/main.go && \
     cd && \
         mkdir /tmp/imagick && cd /tmp/imagick && \
 	wget -O imagick.tar.gz https://github.com/ImageMagick/ImageMagick6/archive/${IMAGEMAGICK_VERSION}.tar.gz && \
